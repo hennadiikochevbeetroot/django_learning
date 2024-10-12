@@ -2,4 +2,7 @@
 .venv
 **__pycache__
 .env
+.env.dev
+.env.staging
+.env.prod
 db.sqlite3
