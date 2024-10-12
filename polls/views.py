@@ -1,9 +1,18 @@
 from django.http import HttpRequest, HttpResponse
 
+from .models import Question
+
 
 # Create your views here.
 def index(request: HttpRequest) -> HttpResponse:
-    return HttpResponse('Hello world')
+    latest_questions = Question.objects.order_by('-pub_date')
+    five_latest = latest_questions[:5]
+    latest_questions_text = ''
+    for question in five_latest:
+        latest_questions_text += question.question_text
+        latest_questions_text += '\n'
+
+    return HttpResponse(f'Latest questions:\n {latest_questions_text}')
 
 
 def question(request: HttpRequest, question_id: int) -> HttpResponse:
