@@ -1,4 +1,5 @@
 from django.http import HttpRequest, HttpResponse
+from django.shortcuts import get_object_or_404, render
 
 from .models import Question
 
@@ -7,16 +8,12 @@ from .models import Question
 def index(request: HttpRequest) -> HttpResponse:
     latest_questions = Question.objects.order_by('-pub_date')
     five_latest = latest_questions[:5]
-    latest_questions_text = ''
-    for question in five_latest:
-        latest_questions_text += question.question_text
-        latest_questions_text += '\n'
-
-    return HttpResponse(f'Latest questions:\n {latest_questions_text}')
+    return render(request, 'polls/index.html', {'questions': five_latest})
 
 
 def question(request: HttpRequest, question_id: int) -> HttpResponse:
-    return HttpResponse(f'Question {question_id}')
+    question = get_object_or_404(Question, id=question_id)
+    return render(request, 'polls/question.html', {'question': question})
 
 
 def results(request: HttpRequest, question_id: int) -> HttpResponse:
