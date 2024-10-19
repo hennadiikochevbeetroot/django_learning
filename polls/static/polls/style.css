@@ -1,3 +1,11 @@
 h1 {
     color: green;
 }
+.question_link {
+    color: darkred;
+    font-size: 15px;
+    font-family: "Arial", "DejaVu Sans Mono", serif;
+}
+#questions_header {
+    font-size: 50px;
+}
