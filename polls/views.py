@@ -18,10 +18,6 @@ def question(request: HttpRequest, question_id: int) -> HttpResponse:
     return render(request, 'polls/question.html', {'question': question})
 
 
-def results(request: HttpRequest, question_id: int) -> HttpResponse:
-    return HttpResponse(f'Result for question {question_id}')
-
-
 def vote(request: HttpRequest, question_id: int) -> HttpResponse:
     question = get_object_or_404(Question, pk=question_id)
     try:
@@ -33,6 +29,11 @@ def vote(request: HttpRequest, question_id: int) -> HttpResponse:
     selected_choice.votes = F("votes") + 1
     selected_choice.save()
     return redirect(reverse("polls:results", args=(question.id,)))
+
+
+def results(request: HttpRequest, question_id: int) -> HttpResponse:
+    question = get_object_or_404(Question, id=question_id)
+    return render(request, "polls/results.html", {'question': question})
 
 
 def message(request: HttpRequest) -> HttpResponse:
