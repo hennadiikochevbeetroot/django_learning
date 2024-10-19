@@ -2,20 +2,29 @@ from django.db.models import F
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls.base import reverse
+from django.views.generic import DetailView, ListView
 
 from .models import Choice, Question
 
 
-# Create your views here.
-def index(request: HttpRequest) -> HttpResponse:
-    latest_questions = Question.objects.order_by('-pub_date')
-    five_latest = latest_questions[:5]
-    return render(request, 'polls/index.html', {'questions': five_latest})
+class IndexView(ListView):
+    template_name = 'polls/index.html'
+    context_object_name = 'questions'
+
+    def get_queryset(self):
+        latest_questions = Question.objects.order_by('-pub_date')
+        five_latest = latest_questions[:5]
+        return five_latest
 
 
-def question(request: HttpRequest, question_id: int) -> HttpResponse:
-    question = get_object_or_404(Question, id=question_id)
-    return render(request, 'polls/question.html', {'question': question})
+class QuestionView(DetailView):
+    model = Question
+    template_name = 'polls/question.html'
+
+
+class ResultsView(DetailView):
+    model = Question
+    template_name = 'polls/results.html'
 
 
 def vote(request: HttpRequest, question_id: int) -> HttpResponse:
@@ -29,11 +38,6 @@ def vote(request: HttpRequest, question_id: int) -> HttpResponse:
     selected_choice.votes = F("votes") + 1
     selected_choice.save()
     return redirect(reverse("polls:results", args=(question.id,)))
-
-
-def results(request: HttpRequest, question_id: int) -> HttpResponse:
-    question = get_object_or_404(Question, id=question_id)
-    return render(request, "polls/results.html", {'question': question})
 
 
 def message(request: HttpRequest) -> HttpResponse:
